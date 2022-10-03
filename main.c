@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
 		exit(EXIT_FAILURE);
 	} 
 
-	struct sockaddr_in servaddr, remoteaddr, localaddr;
+	struct sockaddr_in servaddr, remote_addr, localaddr;
 	char return_ip[32]; 
 	unsigned short return_port=0;
 	char* stun_server_ip = argv[1];
@@ -66,7 +66,18 @@ int main(int argc, char *argv[])
     if (pthread_create(&keep_connect_thread, NULL, keep_connect, &servaddr) != 0)
         handle_error("thread_read");
 
-	struct sockaddr_in remote_addr = set_remote();
+	/*Connect to remote*/
+	char remote_ip[30];
+	int remote_port;
+    memset(&remote_addr, 0, sizeof(struct sockaddr_in));
+    remote_addr.sin_family = AF_INET;
+    remote_addr.sin_port = htons(remote_port);	
+	inet_pton(AF_INET, remote_ip, &remote_addr.sin_addr.s_addr);
+
+	printf("\nConnecting to... <remote_ip> <remote_port> : ");
+	scanf("%s %d", remote_ip, &remote_port);
+	printf("\nWaiting for connection...\n");
+
 
 	n = udp_hole_punching(sockfd, remote_addr);
 	if (n == -1) {

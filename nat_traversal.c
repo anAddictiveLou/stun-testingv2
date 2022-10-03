@@ -168,7 +168,7 @@ int connect_to_symmetric_nat(client* c, uint32_t peer_id, struct peer_info remot
     peer_addr.sin_addr.s_addr = inet_addr(remote_peer.ip);
 
     int *holes = malloc(NUM_OF_PORTS * sizeof(int));
-    shuffle(ports, MAX_PORT - MIN_PORT + 1);
+    shuffle(ports, MAX_PORT - MIN_PORT + 1);    //pick random ports
 
     int i = 0;
     for (; i < NUM_OF_PORTS;) {
@@ -176,7 +176,7 @@ int connect_to_symmetric_nat(client* c, uint32_t peer_id, struct peer_info remot
         if (port != remote_peer.port) { // exclude the used one
             peer_addr.sin_port = htons(port);
 
-            if ((holes[i] = punch_hole(peer_addr, c->ttl)) < 0) {
+            if ((holes[i] = punch_hole(peer_addr, 2)) < 0) {
                 // NAT in front of us wound't tolerate too many ports used by one application
                 verbose_log("failed to punch hole, error: %s\n", strerror(errno));
                 break;

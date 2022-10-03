@@ -141,8 +141,9 @@ int udp_hole_punching(int sockfd, struct sockaddr_in remote_addr)
 
 	while (count > 0)
 	{	
-		memcpy(buf, temp, sizeof(temp));
-		sendCheck = sendto(sockfd, buf, sizeof(buf), 0, (const struct sockaddr *) &remote_addr, sizeof(remote_addr));
+		sendCheck = sendto(sockfd, temp, sizeof(temp), 0, (const struct sockaddr *) &remote_addr, sizeof(remote_addr));
+		if (sendCheck == -1) 
+			handle_error("sendto()");
 		if (sendCheck > 0) {
 			count--;
 			printf("\nTry to send %d UDP packet to remote addr.\n", 10 - count);
@@ -177,7 +178,7 @@ struct sockaddr_in set_remote(void)
 {
 	/*Connect to remote*/
 	struct sockaddr_in remote_addr;
-	char remote_ip[30];
+	char remote_ip[16];
 	int remote_port;
     memset(&remote_addr, 0, sizeof(struct sockaddr_in));
     remote_addr.sin_family = AF_INET;
@@ -220,10 +221,10 @@ void *keep_connect(void *servaddr)
 	char keep_mapping_msg[4] = "keep";
 	while(1)
 	{
-		k = sendto(sockfd, keep_mapping_msg, sizeof(keep_mapping_msg), 0, (const struct sockaddr*) &servaddr_t, sizeof(struct sockaddr)); 
-		if (k == -1)
-			handle_error("\nsendto_keepmapping(): ");
+		//k = sendto(sockfd, keep_mapping_msg, sizeof(keep_mapping_msg), 0, (const struct sockaddr*) &servaddr_t, sizeof(struct sockaddr)); 
+		//if (k == -1)
+		//	handle_error("\nsendto_keepmapping(): ");
 		//if (keep_mapping_condition == 1)
-		sleep(1);
+		sleep(100);
 	} 
 }
